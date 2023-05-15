@@ -1,6 +1,0 @@
-streamlit
-pandas
-matplotlib
-pyairtable
-requests
-imgur-uploader
