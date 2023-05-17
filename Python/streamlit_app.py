@@ -66,7 +66,7 @@ class LoshuGrid:
 class LoshuGridPlot:
 
     @staticmethod
-    def draw_loshu_grid(grid, celestial=False, ax=None):
+    def draw_loshu_grid(grid, celestial=False, labels=False, ax=None):
         if ax is None:
             fig, ax = plt.subplots(figsize=(3, 3))
 
@@ -95,7 +95,6 @@ class LoshuGridPlot:
 
         for i in range(3):
             for j in range(3):
-                cell_text = table_data[i][j]
                 if celestial:
                     digits_in_cell = table_data[i][j]
                     celestial_body_names = set(
@@ -107,22 +106,24 @@ class LoshuGridPlot:
                         3: "Weak"
                     }.get(len(digits_in_cell), "Weaker")
                     cell_text = f'{digits_in_cell}\n{" ".join(celestial_body_names)}\n{frequency_description}'
+                    table.add_cell(i, j, 1, 1, text="", loc='center',facecolor='white')  # add empty cell
+                    ax.text(j / 3 + 1/6, (2 - i) / 3 + 1/6, cell_text,
+                        ha='center', va='center', fontsize=5, color='red')
                 else:
-                    celestial_body = celestial_bodies.get(table_data[i][j], "")
-                    if celestial_body:
-                        cell_text += f" ({celestial_body})"
-                table.add_cell(i, j, 1, 1, text=cell_text,
-                               loc='center', facecolor='white')
+                    cell_text = table_data[i][j]
+                    table.add_cell(i, j, 1, 1, text=cell_text, loc='center', facecolor='white')
 
-        # Add labels for rows
-        for i, label in enumerate(row_labels):
-            ax.text(-0.1, (2 - i) / 3 + 1/6, label,
-                    ha='right', va='center', fontsize=5)
 
-        # Add labels for columns
-        for j, label in enumerate(col_labels):
-            ax.text(j / 3 + 1/6, 1.1, label,
-                    ha='center', va='bottom', fontsize=5)
+        if labels:
+            # Add labels for rows
+            for i, label in enumerate(row_labels):
+                ax.text(-0.1, (2 - i) / 3 + 1/6, label,
+                        ha='right', va='center', fontsize=5)
+
+            # Add labels for columns
+            for j, label in enumerate(col_labels):
+                ax.text(j / 3 + 1/6, 1.1, label,
+                        ha='center', va='bottom', fontsize=5)
 
         ax.add_table(table)
         ax.axis('off')
@@ -131,9 +132,13 @@ class LoshuGridPlot:
 class UserInputs:
 
     def __init__(self):
-        self.name = st.text_input("Your Full Name")
-        self.dob = st.date_input("Date of birth", datetime(1990, 1, 28))
-        self.gender = st.radio('Sex', ["Male", "Female"])
+        col1, col2 = st.columns(2)
+        with col1:
+            self.name = st.text_input("Your Full Name")
+            self.dob = st.date_input("Date of birth", datetime(1990, 1, 28))
+        with col2:
+            self.gender = st.radio('Sex', ["Male", "Female"])
+            self.labels = st.checkbox("Horizontal and Vertical Planes")
 
 
 class NumerologyTable:
@@ -172,23 +177,22 @@ def calculate_numerology_values(inputs):
 
 def display_numerology_values(psychic_number, destiny_number, kua_number):
     col1, col2, col3, col4 = st.columns(4)
-    col2.write(f"Psychic Number: {psychic_number}")
-    col3.write(f"Destiny Number: {destiny_number}")
-    col4.write(f"Kua Number: {kua_number}")
+    col2.markdown(f"<h5 style='text-align: center; color: blue;'>Psychic Number: {psychic_number}</h5>", unsafe_allow_html=True)
+    col3.markdown(f"<h5 style='text-align: center; color: green;'>Destiny Number: {destiny_number}</h5>", unsafe_allow_html=True)
+    col4.markdown(f"<h5 style='text-align: center; color: red;'>Kua Number: {kua_number}</h5>", unsafe_allow_html=True)
 
 
-def draw_loshu_grids(loshu_grid):
+def draw_loshu_grids(loshu_grid, labels):
     fig, ax = plt.subplots(figsize=(3, 3))
-    LoshuGridPlot.draw_loshu_grid(loshu_grid, ax=ax)
+    LoshuGridPlot.draw_loshu_grid(loshu_grid, celestial=False, labels=labels, ax=ax)
     st.pyplot(fig)
 
     fig, ax = plt.subplots(figsize=(3, 3))
-    LoshuGridPlot.draw_loshu_grid(loshu_grid, celestial=True, ax=ax)
+    LoshuGridPlot.draw_loshu_grid(loshu_grid, celestial=True, labels=labels, ax=ax)
     st.pyplot(fig)
-
 
 def main():
-    st.title("Loshu Grid Generator")
+    st.title("LoShu Grid")
 
     inputs = UserInputs()
 
@@ -199,7 +203,7 @@ def main():
 
         loshu_grid = LoshuGrid(dob_str, inputs.gender.lower()).grid
 
-        draw_loshu_grids(loshu_grid)
+        draw_loshu_grids(loshu_grid, inputs.labels)
 
         NumerologyTable.create_record(inputs.name, inputs.dob, inputs.gender, psychic_number, destiny_number, kua_number, loshu_grid)
 
