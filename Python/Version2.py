@@ -134,18 +134,16 @@ class UserInputs:
     def __init__(self):
         col1, col2 = st.columns(2)
         with col1:
-            self.fname = st.text_input("First Name")
-            self.lname = st.text_input("Last Name")
+            self.name = st.text_input("Your Full Name")
             self.dob = st.date_input("Date of birth", datetime(1990, 1, 28))
         with col2:
             self.gender = st.radio('Sex', ["Male", "Female"])
             self.labels = st.checkbox("Horizontal and Vertical Planes", value=True)
 
-
 class NumerologyTable:
 
     @staticmethod
-    def create_record(fname, lname, dob, gender, psychic_number, destiny_number, kua_number, loshu_grid):
+    def create_record(name, dob, gender, psychic_number, destiny_number, kua_number, loshu_grid):
         # Create string representation of Loshu grid
         grid_representation = "\n".join([
             f"| {loshu_grid[4] or '__'} | {loshu_grid[9] or '__'} | {loshu_grid[2] or '__'} |",
@@ -154,8 +152,7 @@ class NumerologyTable:
         ])
 
         record = {
-            'FName': fname,
-            'LName': lname,
+            'Name': name,
             'DOB': dob.strftime("%Y-%m-%d"),
             'Gender': gender,
             'Psychic': psychic_number,
@@ -185,15 +182,13 @@ def display_numerology_values(psychic_number, destiny_number, kua_number):
 
 
 def draw_loshu_grids(loshu_grid, labels):
-    col1, col2 = st.columns(2)
-    with col1:
-        fig, ax = plt.subplots(figsize=(3, 3))
-        LoshuGridPlot.draw_loshu_grid(loshu_grid, celestial=False, labels=labels, ax=ax)
-        st.pyplot(fig)
-    with col2:
-        fig, ax = plt.subplots(figsize=(3, 3))
-        LoshuGridPlot.draw_loshu_grid(loshu_grid, celestial=True, labels=labels, ax=ax)
-        st.pyplot(fig)
+    fig, ax = plt.subplots(figsize=(3, 3))
+    LoshuGridPlot.draw_loshu_grid(loshu_grid, celestial=False, labels=labels, ax=ax)
+    st.pyplot(fig)
+
+    fig, ax = plt.subplots(figsize=(3, 3))
+    LoshuGridPlot.draw_loshu_grid(loshu_grid, celestial=True, labels=labels, ax=ax)
+    st.pyplot(fig)
 
 def main():
     st.title("LoShu Grid")
@@ -209,7 +204,7 @@ def main():
 
         draw_loshu_grids(loshu_grid, inputs.labels)
 
-        NumerologyTable.create_record(inputs.fname, inputs.lname, inputs.dob, inputs.gender, psychic_number, destiny_number, kua_number, loshu_grid)
+        NumerologyTable.create_record(inputs.name, inputs.dob, inputs.gender, psychic_number, destiny_number, kua_number, loshu_grid)
 
 
 if __name__ == "__main__":
