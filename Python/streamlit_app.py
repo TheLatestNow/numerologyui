@@ -62,13 +62,13 @@ def main():
 
             draw_loshu_grids(loshu_grid, inputs.labels)
 
-            st.image("knumberchart.png", caption = kua_number)
+            # st.image("https://github.com/TheLatestNow/numerologyui/blob/main/Python/knumberchart.png", caption = kua_number)
 
             NumerologyTable.create_record(inputs.fname, inputs.lname, inputs.dob, inputs.gender, psychic_number, destiny_number, kua_number, loshu_grid)
 
             # Get psychic description and display it
-            description = get_psychic_description(psychic_number)
-            st.markdown(description, unsafe_allow_html=True)
+            # description = get_psychic_description(psychic_number)
+            # st.markdown(description, unsafe_allow_html=True)
 
             pass
         else:

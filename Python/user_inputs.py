@@ -8,7 +8,7 @@ class UserInputs:
         with col1:
             self.fname = st.text_input("First Name")
             self.lname = st.text_input("Last Name")
-            self.dob = st.date_input("Date of birth")
+            self.dob = st.date_input("Date of birth, (edit yyyy/mm/dd if date selector is not working)")
         with col2:
             self.gender = st.radio('Sex', ["Male", "Female"])
             self.labels = st.checkbox("Horizontal and Vertical Planes", value=True)
